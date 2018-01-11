@@ -24,7 +24,7 @@ namespace KeePassTimestampChanger
 
 		public override string UpdateUrl
 		{
-			get { return "https://github.com/KN4CK3R/KeePassTimestampChanger/raw/master/keepass.version"; }
+			get { return "https://github.com/JanisEst/KeePassTimestampChanger/raw/master/keepass.version"; }
 		}
 
 		public override bool Initialize(IPluginHost host)
