@@ -35,7 +35,7 @@ namespace KeePassTimestampChanger
 			
 			GlobalWindowManager.WindowAdded += WindowAddedHandler;
 
-			var m_ctxEntryMassModify = host.MainWindow.EntryContextMenu.Items.Find("m_ctxEntryMassModify", false).FirstOrDefault() as ToolStripMenuItem;
+			var m_ctxEntryMassModify = host.MainWindow.EntryContextMenu.Items.Find("m_ctxEntryEditQuick", false).FirstOrDefault() as ToolStripMenuItem;
 			if (m_ctxEntryMassModify != null)
 			{
 				ctxItem = CreateToolStripItem(() =>
