@@ -8,6 +8,7 @@ using KeePass;
 using KeePass.Forms;
 using KeePass.Plugins;
 using KeePass.UI;
+using KeePassLib;
 
 namespace KeePassTimestampChanger
 {
@@ -90,7 +91,7 @@ namespace KeePassTimestampChanger
 
 							var entry = entryForm.EntryRef.History.GetAt((uint)indices[0]);
 
-							ShowModifyEntriesDialog(Enumerable.Repeat(entry, 1));
+							ShowModifyEntriesDialog(new PwEntry[] { entry });
 						}));
 					}
 				};
@@ -108,31 +109,37 @@ namespace KeePassTimestampChanger
 			return item;
 		}
 
-		private static void ShowModifyEntriesDialog(IEnumerable<KeePassLib.PwEntry> entries)
+		private static void ShowModifyEntriesDialog(ICollection<PwEntry> entries)
 		{
-			if (entries.Any())
+			var firstEntry = entries.FirstOrDefault();
+			if (firstEntry == null)
 			{
-				var firstEntry = entries.First();
-				using (var met = new ModifyEntryTimestampsForm(firstEntry.CreationTime, firstEntry.LastModificationTime, firstEntry.LastAccessTime))
-				{
-					if (met.ShowDialog() == DialogResult.OK)
-					{
-						if (met.SetCreationTime || met.SetLastModificationTime || met.SetLastAccessTime)
-						{
-							foreach (var entry in entries)
-							{
-								if (met.SetCreationTime)
-									entry.CreationTime = met.CreationTime;
-								if (met.SetLastModificationTime)
-									entry.LastModificationTime = met.LastModificationTime;
-								if (met.SetLastAccessTime)
-									entry.LastAccessTime = met.LastAccessTime;
-							}
+				return;
+			}
 
-							Program.MainForm.UpdateUI(false, null, false, null, false, null, true);
-						}
-					}
+			using (var met = new ModifyEntryTimestampsForm(firstEntry.CreationTime, firstEntry.LastModificationTime, firstEntry.LastAccessTime))
+			{
+				if (met.ShowDialog() != DialogResult.OK)
+				{
+					return;
 				}
+
+				if (!met.SetCreationTime && !met.SetLastModificationTime && !met.SetLastAccessTime)
+				{
+					return;
+				}
+
+				foreach (var entry in entries)
+				{
+					if (met.SetCreationTime)
+						entry.CreationTime = met.CreationTime;
+					if (met.SetLastModificationTime)
+						entry.LastModificationTime = met.LastModificationTime;
+					if (met.SetLastAccessTime)
+						entry.LastAccessTime = met.LastAccessTime;
+				}
+
+				Program.MainForm.UpdateUI(false, null, false, null, false, null, true);
 			}
 		}
 	}
