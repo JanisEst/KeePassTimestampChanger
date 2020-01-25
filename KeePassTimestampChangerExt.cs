@@ -14,8 +14,6 @@ namespace KeePassTimestampChanger
 {
 	public class KeePassTimestampChangerExt : Plugin
 	{
-		private ToolStripMenuItem ctxItem;
-
 		public const string ShortProductName = "TimestampChanger";
 
 		public override Image SmallIcon
@@ -36,10 +34,19 @@ namespace KeePassTimestampChanger
 			
 			GlobalWindowManager.WindowAdded += WindowAddedHandler;
 
-			var m_ctxEntryMassModify = host.MainWindow.EntryContextMenu.Items.Find("m_ctxEntryEditQuick", false).FirstOrDefault() as ToolStripMenuItem;
-			if (m_ctxEntryMassModify != null)
+			return true;
+		}
+
+		public override void Terminate()
+		{
+			GlobalWindowManager.WindowAdded -= WindowAddedHandler;
+		}
+
+		public override ToolStripMenuItem GetMenuItem(PluginMenuType t)
+		{
+			if (t == PluginMenuType.Entry)
 			{
-				ctxItem = CreateToolStripItem(() =>
+				return CreateToolStripItem(() =>
 				{
 					var entries = Program.MainForm.GetSelectedEntries();
 					if (entries != null)
@@ -47,24 +54,11 @@ namespace KeePassTimestampChanger
 						ShowModifyEntriesDialog(entries);
 					}
 				});
-
-				var index = m_ctxEntryMassModify.DropDownItems.IndexOfKey("m_ctxEntryMassSetIcon") + 1;
-				m_ctxEntryMassModify.DropDownItems.Insert(index, ctxItem);
 			}
-
-			return true;
+			return null;
 		}
 
-		public override void Terminate()
-		{
-			GlobalWindowManager.WindowAdded -= WindowAddedHandler;
-
-			ctxItem.GetCurrentParent().Items.Remove(ctxItem);
-			ctxItem.Dispose();
-			ctxItem = null;
-		}
-
-		private void WindowAddedHandler(object sender, GwmWindowEventArgs e)
+		private static void WindowAddedHandler(object sender, GwmWindowEventArgs e)
 		{
 			var entryForm = e.Form as PwEntryForm;
 			if (entryForm != null)
