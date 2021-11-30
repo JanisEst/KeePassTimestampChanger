@@ -11,7 +11,7 @@ plug-in to "hide" the time you have changed an entry.
 
 INSTALLATION
 -----
-- Download from https://github.com/KN4CK3R/KeePassTimestampChanger/releases
+- Download from https://github.com/JanisEst/KeePassTimestampChanger/releases
 - Copy the plug-in (KeePassTimestampChanger.plgx) into the KeePass plugin directory
 - Start KeePass (and open a database)
 
